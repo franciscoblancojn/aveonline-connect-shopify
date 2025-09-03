@@ -42,4 +42,4 @@ jobs:
                   echo "SHOPIFY_APP_URL=${{ secrets.SHOPIFY_APP_URL }}" >> .env
                   echo "SCOPES=${{ secrets.SCOPES }}" >> .env
                   cat .env
-                  docker compose up app --build -d
+                  docker compose up --build -d
