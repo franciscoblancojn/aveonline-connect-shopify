@@ -1,4 +1,4 @@
-name: Deploy on PR Merge
+name: Deploy Producto
 
 on:
   push:
@@ -11,34 +11,47 @@ on:
       - closed
 
 jobs:
-  deploy_production:
-    if: github.event.pull_request.merged == true || github.event_name == 'push'
-    runs-on: ubuntu-latest
+    merge_changes_into_master_branch:
+        if: github.event.pull_request.merged == true || github.event_name == 'push'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Despliegue al entorno de produccion
+              uses: appleboy/ssh-action@master
+              with:
+                  command_timeout: 20m
+                  host: ${{ vars.APP_PRODUCT_HOST }}
+                  username: ${{ vars.DEFAULT_DEPLOY_USER}}
+                  key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
+                  passphrase: ${{ secrets.SSH_PASSPHRASE_API }}
+                  port: 22
+                  script: |
+                      cd /home
 
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Configuración inicial de Git
-        run: git config core.sharedRepository true
+                      if ! [ -d 'aveonline-connect-shopify' ]
 
-      - name: Despliegue en producción
-        uses: appleboy/ssh-action@master
-        with:
-          host: 131.0.136.173
-          username: root
-          key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE_PRODUCT }}
-          port: 22
-          script: |
-            cd /home/landing-chacana/
-            if [ -d 'LANDING-21-03' ]; then
-                cd LANDING-21-03
-                git pull origin main
-                docker compose build --no-cache
-                docker system prune
-                docker compose up -d
-            else
-                git clone git@github.com:PandoraExperience/landing.git LANDING-21-03
-                cd LANDING-21-03
-                docker compose up -d
-            fi
+                      then
+                        git clone git@github.com:aveonline-admin/aveonline-connect-shopify.git aveonline-connect-shopify
+                      fi
+
+                      cd aveonline-connect-shopify
+                      git config pull.rebase false
+                      git checkout master
+                      git pull origin master
+
+                      if  [ -f '.env' ]
+                      then
+                          rm -rf .env
+                      fi
+
+                      touch .env
+
+                      echo "SHOPIFY_API_KEY=${{ secrets.SHOPIFY_API_KEY }}" >> .env
+                      echo "SHOPIFY_API_SECRET=${{ secrets.SHOPIFY_API_SECRET }}" >> .env
+                      echo "SHOPIFY_SCOPES=${{ secrets.SHOPIFY_SCOPES }}" >> .env
+                      echo "SHOPIFY_APP_URL=${{ secrets.SHOPIFY_APP_URL }}" >> .env
+                      echo "scopes=${{ secrets.SCOPES }}" >> .env
+
+                      cat .env
+
+                      docker compose up app --build -d
