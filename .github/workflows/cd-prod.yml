@@ -20,10 +20,10 @@ jobs:
               uses: appleboy/ssh-action@master
               with:
                   command_timeout: 20m
-                  host: ${{ vars.APP_PRODUCT_HOST }}
-                  username: ${{ vars.DEFAULT_DEPLOY_USER}}
+                  host: 131.0.136.173
+                  username: root
                   key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
-                  passphrase: ${{ secrets.SSH_PASSPHRASE_API }}
+                  passphrase: ${{ secrets.SSH_PASSPHRASE_PRODUCT }}
                   port: 22
                   script: |
                       cd /home
