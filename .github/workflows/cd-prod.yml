@@ -26,7 +26,7 @@ jobs:
         with:
           host: 131.0.136.173
           username: root
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
           port: 22
           script: |
             cd /home/landing-chacana/
