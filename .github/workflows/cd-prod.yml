@@ -1,10 +1,14 @@
 name: Deploy on PR Merge
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
-      - main
+      - master
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
 
 jobs:
   deploy_production:
