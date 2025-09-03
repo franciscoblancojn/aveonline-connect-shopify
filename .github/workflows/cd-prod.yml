@@ -1,57 +1,45 @@
 name: Deploy Producto
 
 on:
+  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-    types:
-      - closed
-
+    branches: [ master ]
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    merge_changes_into_master_branch:
-        if: github.event.pull_request.merged == true || github.event_name == 'push'
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Despliegue al entorno de produccion
-              uses: appleboy/ssh-action@master
-              with:
-                  command_timeout: 20m
-                  host: 131.0.136.173
-                  username: root
-                  key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
-                  passphrase: ${{ secrets.SSH_PASSPHRASE_PRODUCT }}
-                  port: 22
-                  script: |
-                      cd /home
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
-                      if ! [ -d 'aveonline-connect-shopify' ]
-
-                      then
-                        git clone git@github.com:aveonline-admin/aveonline-connect-shopify.git aveonline-connect-shopify
-                      fi
-
-                      cd aveonline-connect-shopify
-                      git config pull.rebase false
-                      git checkout master
-                      git pull origin master
-
-                      if  [ -f '.env' ]
-                      then
-                          rm -rf .env
-                      fi
-
-                      touch .env
-
-                      echo "SHOPIFY_API_KEY=${{ secrets.SHOPIFY_API_KEY }}" >> .env
-                      echo "SHOPIFY_API_SECRET=${{ secrets.SHOPIFY_API_SECRET }}" >> .env
-                      echo "SHOPIFY_SCOPES=${{ secrets.SHOPIFY_SCOPES }}" >> .env
-                      echo "SHOPIFY_APP_URL=${{ secrets.SHOPIFY_APP_URL }}" >> .env
-                      echo "scopes=${{ secrets.SCOPES }}" >> .env
-
-                      cat .env
-
-                      docker compose up app --build -d
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Deploy using ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{vars.APP_PRODUCT_HOST}}
+        username: ${{vars.DEFAULT_DEPLOY_USER}}
+        key: ${{ secrets.APP_PRODUCT_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE_PRODUCT }}
+        port: 22
+        script: |
+                  cd /home
+                  if ! [ -d 'aveonline-connect-shopify' ]
+                  then
+                    git clone git@github.com:aveonline-admin/aveonline-connect-shopify.git aveonline-connect-shopify
+                  fi
+                  cd aveonline-connect-shopify
+                  git config pull.rebase false
+                  git checkout master
+                  git pull origin master
+                  if  [ -f '.env' ]
+                  then
+                      rm -rf .env
+                  fi
+                  touch .env
+                  echo "SHOPIFY_API_KEY=${{ secrets.SHOPIFY_API_KEY }}" >> .env
+                  echo "SHOPIFY_API_SECRET=${{ secrets.SHOPIFY_API_SECRET }}" >> .env
+                  echo "SHOPIFY_SCOPES=${{ secrets.SHOPIFY_SCOPES }}" >> .env
+                  echo "SHOPIFY_APP_URL=${{ secrets.SHOPIFY_APP_URL }}" >> .env
+                  echo "scopes=${{ secrets.SCOPES }}" >> .env
+                  cat .env
+                  docker compose up app --build -d
