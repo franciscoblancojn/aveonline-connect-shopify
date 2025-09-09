@@ -77,7 +77,12 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                         label="Agente"
                                         placeholder="Agente"
                                         typeSelect="select"
-                                        defaultValue={(data?.agentes ?? [])?.find(e=>`${e.id}` == data.currentAgente)}
+                                        defaultValue={(
+                                            data?.agentes ?? []
+                                        )?.find(
+                                            (e) =>
+                                                `${e.id}` == data.currentAgente,
+                                        )}
                                         validator={validatorData?.currentAgente}
                                         options={data?.agentes ?? []}
                                         onParse={(e) => {

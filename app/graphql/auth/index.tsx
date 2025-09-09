@@ -101,20 +101,23 @@ export class GraphqlAuth {
                     token,
                 });
                 agentes = resultAgentes?.agentes ?? [];
-                console.table(agentes);
-                const resultWebHook = await onAddAllWebhooks({
-                    token,
-                    shop,
-                });
-                console.log({ resultWebHook });
-                const resultSaveToken = await api.shopify.onSaveToken({
-                    idempresa: api.user.idempresa,
-                    token: api.user.token,
-                    "x-shopify-shop-domain": shop,
-                    modify: id_font,
-                });
-                id_font = resultSaveToken?.data?.id;
-                console.log({ resultSaveToken });
+                if (currentAgente) {
+                    console.table(agentes);
+                    const resultWebHook = await onAddAllWebhooks({
+                        token,
+                        shop,
+                    });
+                    console.log({ resultWebHook });
+                    const resultSaveToken = await api.shopify.onSaveToken({
+                        idempresa: api.user.idempresa,
+                        token: api.user.token,
+                        "x-shopify-shop-domain": shop,
+                        modify: id_font,
+                        idagente: parseInt(`${currentAgente}`)
+                    });
+                    id_font = resultSaveToken?.data?.id;
+                    console.log({ resultSaveToken });
+                }
             }
 
             // 1. Obtener el ID de instalación de la app
