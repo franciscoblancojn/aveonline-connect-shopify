@@ -12,9 +12,9 @@ import {
 import type { useFormAuthProps } from "./hook";
 import { useFormAuth } from "./hook";
 import { useFetcher } from "@remix-run/react";
-import { IFormAuth, IFormAuthAgentes } from "./interface";
+import type { IFormAuthAgentes } from "./interface";
 
-export interface FormAuthProps extends useFormAuthProps { }
+export interface FormAuthProps extends useFormAuthProps {}
 
 export const FormAuth = ({ ...props }: FormAuthProps) => {
     const fetcher = useFetcher();
@@ -69,8 +69,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.password}
                                 onChange={onChangeData("password")}
                             />
-                            {
-                                data?.agentes &&
+                            {data?.agentes && (
                                 <>
                                     <InputSelectT<IFormAuthAgentes>
                                         id="currentAgente"
@@ -86,15 +85,14 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                             return {
                                                 id: e?.id ?? 0,
                                                 text: e?.nombre ?? "",
-                                                data: e
-                                            }
+                                                data: e,
+                                            };
                                         }}
                                         classNameList="ave-select fenext-input-content-input"
                                         classNameContentInput="d-none"
                                     />
                                 </>
-                            }
-
+                            )}
 
                             {dataError && (
                                 <ErrorComponent error={dataError?.error} />
@@ -136,7 +134,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                         </BlockStack>
                     </Box>
                 </BlockStack>
-                <style >{`
+                <style>{`
                     .d-none.d-none{
                         display:none;
                     }

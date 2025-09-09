@@ -6,7 +6,7 @@ import { AveApi } from "aveonline";
 import type { Session } from "@shopify/shopify-app-remix/server";
 import { onAddAllWebhooks } from "app/webhook";
 import { parseNumber } from "fenextjs";
-import { IFormAuth } from "app/components/form/auth/interface";
+import type { IFormAuth } from "app/components/form/auth/interface";
 
 export interface onGetDataProps {
     admin: AdminApiContextWithoutRest;
@@ -92,15 +92,15 @@ export class GraphqlAuth {
             console.log({
                 user,
             });
-            let agentes: IFormAuth['agentes'] = []
+            let agentes: IFormAuth["agentes"] = [];
             if (api?.user?.token) {
-                const idempresa = api.user.idempresa
-                const token = api.user.token
+                const idempresa = api.user.idempresa;
+                const token = api.user.token;
                 const resultAgentes = await api.agents.get({
                     idempresa,
                     token,
-                })
-                agentes = (resultAgentes?.agentes ?? [])
+                });
+                agentes = resultAgentes?.agentes ?? [];
                 console.table(agentes);
                 const resultWebHook = await onAddAllWebhooks({
                     token,
