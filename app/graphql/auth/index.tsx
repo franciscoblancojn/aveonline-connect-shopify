@@ -119,7 +119,6 @@ export class GraphqlAuth {
                     console.log({ resultSaveToken });
                 }
             }
-
             // 1. Obtener el ID de instalación de la app
             const respond = await admin.graphql(`
                 query {
