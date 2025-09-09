@@ -113,7 +113,7 @@ export class GraphqlAuth {
                         token: api.user.token,
                         "x-shopify-shop-domain": shop,
                         modify: id_font,
-                        idagente: parseInt(`${currentAgente}`)
+                        idagente: parseInt(`${currentAgente}`),
                     });
                     id_font = resultSaveToken?.data?.id;
                     console.log({ resultSaveToken });
