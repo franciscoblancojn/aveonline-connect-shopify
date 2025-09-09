@@ -25,7 +25,7 @@ jobs:
                   cd /home
                   if ! [ -d 'aveonline-connect-shopify' ]
                   then
-                    git clone git@github.com:aveonline-admin/aveonline-connect-shopify.git aveonline-connect-shopify
+                    git clone git@github.com:Development-Aveonline/aveonline-connect-shopify.git aveonline-connect-shopify
                   fi
                   cd aveonline-connect-shopify
                   git config pull.rebase false
