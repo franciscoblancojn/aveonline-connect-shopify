@@ -82,13 +82,15 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                         validator={validatorData?.currentAgente}
                                         onChange={onChangeData("currentAgente")}
                                         options={data?.agentes ?? []}
-                                        onParse={(e)=>{
+                                        onParse={(e) => {
                                             return {
-                                                id:e?.id ?? 0,
-                                                text:e?.nombre ?? "",
-                                                data:e
+                                                id: e?.id ?? 0,
+                                                text: e?.nombre ?? "",
+                                                data: e
                                             }
                                         }}
+                                        classNameList="ave-select fenext-input-content-input"
+                                        classNameContentInput="d-none"
                                     />
                                 </>
                             }
@@ -134,6 +136,31 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                         </BlockStack>
                     </Box>
                 </BlockStack>
+                <style >{`
+                    .d-none.d-none{
+                        display:none;
+                    }
+                    .ave-select.ave-select{
+                        opacity: 1;
+                        position: static;
+                    }
+                    .fenext-input-content-input.fenext-input-content-input {
+                        width: 100%;
+                        padding: 1rem 1.5rem;
+                        opacity: 1;
+                        border-radius: .7rem;
+                        border: 0;
+                        color: var(--fenext-color-dark);
+                        background-color: var(--fenext-color-light);
+                        font-family: var(--fenext-font-global);
+                        box-shadow: var(--box-shadow);
+                        font-size: 1rem;
+                        font-weight: 800;
+                        line-height: 1.36;
+                        text-align: left;
+                        outline: none;
+                    }
+                `}</style>
             </fetcher.Form>
         </>
     );
