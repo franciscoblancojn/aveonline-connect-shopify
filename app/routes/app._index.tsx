@@ -46,7 +46,7 @@ export default function Index() {
                         <BlockStack gap="500">
                             <Box>
                                 <BlockStack gap="200">
-                                    {/* {JSON.stringify(settings, null, 2)} */}
+                                    {JSON.stringify(settings, null, 2)}
                                     <Title tag="h5">Aveonline</Title>
                                     <BlockStack gap="200">
                                         <InlineStack align="space-between">
