@@ -9,6 +9,14 @@ export const useLoaderData = () => {
         } else if (settings[key] === "false") {
             settings[key] = false;
         }
+        if (settings[key] && settings[key][0] && (settings[key][0] == "{" || settings[key][0] == "[")) {
+            try {
+                const d = JSON.parse(settings[key]);
+                settings[key] = d
+            } catch (error) {
+
+            }
+        }
     });
     return settings;
 };

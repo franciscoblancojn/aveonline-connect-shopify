@@ -4,6 +4,7 @@ import {
     Button,
     ErrorComponent,
     InputPassword,
+    InputSelectT,
     InputSwich,
     InputText,
     Title,
@@ -11,8 +12,9 @@ import {
 import type { useFormAuthProps } from "./hook";
 import { useFormAuth } from "./hook";
 import { useFetcher } from "@remix-run/react";
+import { IFormAuth, IFormAuthAgentes } from "./interface";
 
-export interface FormAuthProps extends useFormAuthProps {}
+export interface FormAuthProps extends useFormAuthProps { }
 
 export const FormAuth = ({ ...props }: FormAuthProps) => {
     const fetcher = useFetcher();
@@ -67,6 +69,31 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.password}
                                 onChange={onChangeData("password")}
                             />
+                            {
+                                data?.agentes &&
+                                <>
+                                    <InputSelectT<IFormAuthAgentes>
+                                        id="currentAgente"
+                                        name="currentAgente"
+                                        label="Agente"
+                                        placeholder="Agente"
+                                        typeSelect="select"
+                                        defaultValue={data.currentAgente}
+                                        validator={validatorData?.currentAgente}
+                                        onChange={onChangeData("currentAgente")}
+                                        options={data?.agentes ?? []}
+                                        onParse={(e)=>{
+                                            return {
+                                                id:e?.id ?? 0,
+                                                text:e?.nombre ?? "",
+                                                data:e
+                                            }
+                                        }}
+                                    />
+                                </>
+                            }
+
+
                             {dataError && (
                                 <ErrorComponent error={dataError?.error} />
                             )}

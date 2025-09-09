@@ -6,6 +6,7 @@ import { AveApi } from "aveonline";
 import type { Session } from "@shopify/shopify-app-remix/server";
 import { onAddAllWebhooks } from "app/webhook";
 import { parseNumber } from "fenextjs";
+import { IFormAuth } from "app/components/form/auth/interface";
 
 export interface onGetDataProps {
     admin: AdminApiContextWithoutRest;
@@ -52,6 +53,7 @@ export class GraphqlAuth {
             const active = form.get("active");
             const user = form.get("user");
             const password = form.get("password");
+            const currentAgente = form.get("currentAgente");
             let id_font: number | string | undefined = `${form.get("id_font")}`;
             if (
                 id_font == "" ||
@@ -77,6 +79,8 @@ export class GraphqlAuth {
                 password,
                 shop,
                 token,
+                id_font,
+                currentAgente,
             });
 
             const api = new AveApi({
@@ -86,9 +90,18 @@ export class GraphqlAuth {
             });
             await api.onLoad();
             console.log({
-                user: api.user,
+                user,
             });
+            let agentes: IFormAuth['agentes'] = []
             if (api?.user?.token) {
+                const idempresa = api.user.idempresa
+                const token = api.user.token
+                const resultAgentes = await api.agents.get({
+                    idempresa,
+                    token,
+                })
+                agentes = (resultAgentes?.agentes ?? [])
+                console.table(agentes);
                 const resultWebHook = await onAddAllWebhooks({
                     token,
                     shop,
@@ -100,7 +113,7 @@ export class GraphqlAuth {
                     "x-shopify-shop-domain": shop,
                     modify: id_font,
                 });
-                id_font = resultSaveToken.data.id;
+                id_font = resultSaveToken?.data?.id;
                 console.log({ resultSaveToken });
             }
 
@@ -113,7 +126,7 @@ export class GraphqlAuth {
             const result = await respond.json();
             const data = result?.data;
 
-            const installId = data.currentAppInstallation.id;
+            const installId = data?.currentAppInstallation?.id;
 
             // 2. Guardar los metafields (usuario y contraseña)
 
@@ -154,6 +167,13 @@ export class GraphqlAuth {
                                 key: "id_font",
                                 value: id_font?.toString() ?? "-1",
                                 type: "number_integer",
+                            },
+                            {
+                                ownerId: installId,
+                                namespace: this.KEY,
+                                key: "agentes",
+                                value: JSON.stringify(agentes),
+                                type: "json",
                             },
                         ],
                     },
