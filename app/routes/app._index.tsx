@@ -41,12 +41,14 @@ export default function Index() {
                 <Layout>
                     <Layout.Section>
                         <FormAuth defaultValue={(settings ?? {}) as any} />
+                        {/* <Box>
+                            {JSON.stringify(settings, null, 2)}
+                        </Box> */}
                     </Layout.Section>
                     <Layout.Section variant="oneThird">
                         <BlockStack gap="500">
                             <Box>
                                 <BlockStack gap="200">
-                                    {JSON.stringify(settings, null, 2)}
                                     <Title tag="h5">Aveonline</Title>
                                     <BlockStack gap="200">
                                         <InlineStack align="space-between">

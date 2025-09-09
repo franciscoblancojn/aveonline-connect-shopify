@@ -77,19 +77,20 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                         label="Agente"
                                         placeholder="Agente"
                                         typeSelect="select"
-                                        defaultValue={data.currentAgente}
+                                        defaultValue={(data?.agentes ?? [])?.find(e=>`${e.id}` == data.currentAgente)}
                                         validator={validatorData?.currentAgente}
-                                        onChange={onChangeData("currentAgente")}
                                         options={data?.agentes ?? []}
                                         onParse={(e) => {
                                             return {
                                                 id: e?.id ?? 0,
+
                                                 text: e?.nombre ?? "",
                                                 data: e,
                                             };
                                         }}
                                         classNameList="ave-select fenext-input-content-input"
                                         classNameContentInput="d-none"
+                                        useIdForValue={true}
                                     />
                                 </>
                             )}

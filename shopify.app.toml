@@ -3,7 +3,7 @@
 client_id = "04f9e383c62d9c03fc7db46b48100048"
 name = "aveonline-connect"
 handle = "aveonline-connect"
-application_url = "https://sm-fixed-guidelines-dynamic.trycloudflare.com"
+application_url = "https://courses-first-ashley-specially.trycloudflare.com"
 embedded = true
 
 
@@ -76,7 +76,7 @@ read_legal_policies,write_legal_policies
 """
 
 [auth]
-redirect_urls = ["https://sm-fixed-guidelines-dynamic.trycloudflare.com/auth/callback", "https://sm-fixed-guidelines-dynamic.trycloudflare.com/auth/shopify/callback", "https://sm-fixed-guidelines-dynamic.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://courses-first-ashley-specially.trycloudflare.com/auth/callback", "https://courses-first-ashley-specially.trycloudflare.com/auth/shopify/callback", "https://courses-first-ashley-specially.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

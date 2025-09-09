@@ -171,6 +171,13 @@ export class GraphqlAuth {
                             {
                                 ownerId: installId,
                                 namespace: this.KEY,
+                                key: "currentAgente",
+                                value: `${currentAgente ?? "-1"}`,
+                                type: "number_integer",
+                            },
+                            {
+                                ownerId: installId,
+                                namespace: this.KEY,
                                 key: "agentes",
                                 value: JSON.stringify(agentes),
                                 type: "json",

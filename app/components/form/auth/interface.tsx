@@ -3,7 +3,7 @@ export interface IFormAuth {
     user: string;
     password: string;
     id_font?: number;
-    currentAgente?: IFormAuthAgentes;
+    currentAgente?: string;
     agentes?: IFormAuthAgentes[];
 }
 export interface IFormAuthAgentes {
