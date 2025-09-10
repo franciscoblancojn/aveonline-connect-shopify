@@ -3,7 +3,7 @@
 client_id = "04f9e383c62d9c03fc7db46b48100048"
 name = "aveonline-connect"
 handle = "aveonline-connect"
-application_url = "https://clicks-fiber-dairy-phys.trycloudflare.com"
+application_url = "https://pupils-houston-halo-fairly.trycloudflare.com"
 embedded = true
 
 
@@ -76,7 +76,7 @@ read_legal_policies,write_legal_policies
 """
 
 [auth]
-redirect_urls = ["https://clicks-fiber-dairy-phys.trycloudflare.com/auth/callback", "https://clicks-fiber-dairy-phys.trycloudflare.com/auth/shopify/callback", "https://clicks-fiber-dairy-phys.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://pupils-houston-halo-fairly.trycloudflare.com/auth/callback", "https://pupils-houston-halo-fairly.trycloudflare.com/auth/shopify/callback", "https://pupils-houston-halo-fairly.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false
