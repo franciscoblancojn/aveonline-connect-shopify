@@ -69,7 +69,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.password}
                                 onChange={onChangeData("password")}
                             />
-                            {data?.agentes && (
+                            {data?.agentes && data?.agentes?.length != 0&& (
                                 <>
                                     <InputSelectT<IFormAuthAgentes>
                                         id="currentAgente"
