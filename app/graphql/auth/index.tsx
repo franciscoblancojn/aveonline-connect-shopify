@@ -113,7 +113,7 @@ export class GraphqlAuth {
                         token: api.user.token,
                         "x-shopify-shop-domain": shop,
                         modify: id_font,
-                        idagente: parseInt(`${currentAgente}`),
+                        agentId: parseInt(`${currentAgente}`),
                     });
                     id_font = resultSaveToken?.data?.id;
                     console.log({ resultSaveToken });
@@ -131,9 +131,9 @@ export class GraphqlAuth {
             const installId = data?.currentAppInstallation?.id;
 
             // 2. Guardar los metafields (usuario y contraseña)
-            let _error = "-1"
+            let _error = "-1";
             if (api?.user?.status == "error") {
-                _error = api?.user?.message
+                _error = api?.user?.message;
             }
             const r = await admin.graphql(
                 `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
@@ -184,7 +184,7 @@ export class GraphqlAuth {
                                 ownerId: installId,
                                 namespace: this.KEY,
                                 key: "currentAgente",
-                                value: `${currentAgente == "" ? "-1" :(currentAgente ?? "-1")}`,
+                                value: `${currentAgente == "" ? "-1" : (currentAgente ?? "-1")}`,
                                 type: "single_line_text_field",
                             },
                             {
@@ -198,9 +198,9 @@ export class GraphqlAuth {
                     },
                 },
             );
-            const r2= await r.json()
-            console.log({r:JSON.stringify(r2?.data)});
-            
+            const r2 = await r.json();
+            console.log({ r: JSON.stringify(r2?.data) });
+
             return json({
                 success: true,
                 message: "Configuración guardada con éxito",

@@ -61,7 +61,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.user}
                                 onChange={onChangeData("user")}
                             />
-                            <InputText
+                            <InputPassword
                                 name="password"
                                 label="Contraseña"
                                 placeholder="Contraseña"
@@ -69,7 +69,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.password}
                                 onChange={onChangeData("password")}
                             />
-                            {data?.agentes && data?.agentes?.length != 0&& (
+                            {data?.agentes && data?.agentes?.length != 0 && (
                                 <>
                                     <InputSelectT<IFormAuthAgentes>
                                         id="currentAgente"
@@ -103,8 +103,8 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                             {dataError && (
                                 <ErrorComponent error={dataError?.error} />
                             )}
-                            {data.error && data.error !='-1' && (
-                                <ErrorComponent >{data.error}</ErrorComponent>
+                            {data.error && data.error != "-1" && (
+                                <ErrorComponent>{data.error}</ErrorComponent>
                             )}
 
                             <div
