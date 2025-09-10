@@ -90,7 +90,7 @@ export class GraphqlAuth {
             });
             await api.onLoad();
             console.log({
-                user,
+                user: api?.user,
             });
             let agentes: IFormAuth["agentes"] = [];
             if (api?.user?.token) {
@@ -131,8 +131,11 @@ export class GraphqlAuth {
             const installId = data?.currentAppInstallation?.id;
 
             // 2. Guardar los metafields (usuario y contraseña)
-
-            await admin.graphql(
+            let _error = "-1"
+            if (api?.user?.status == "error") {
+                _error = api?.user?.message
+            }
+            const r = await admin.graphql(
                 `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
                     metafieldsSet(metafields: $metafields) {
                         metafields { id namespace key value }
@@ -142,6 +145,13 @@ export class GraphqlAuth {
                 {
                     variables: {
                         metafields: [
+                            {
+                                ownerId: installId,
+                                namespace: this.KEY,
+                                key: "error",
+                                value: _error,
+                                type: "single_line_text_field",
+                            },
                             {
                                 ownerId: installId,
                                 namespace: this.KEY,
@@ -167,27 +177,30 @@ export class GraphqlAuth {
                                 ownerId: installId,
                                 namespace: this.KEY,
                                 key: "id_font",
-                                value: id_font?.toString() ?? "-1",
+                                value: `${id_font ?? "-1"}`,
                                 type: "number_integer",
                             },
                             {
                                 ownerId: installId,
                                 namespace: this.KEY,
                                 key: "currentAgente",
-                                value: `${currentAgente ?? "-1"}`,
-                                type: "number_integer",
+                                value: `${currentAgente == "" ? "-1" :(currentAgente ?? "-1")}`,
+                                type: "single_line_text_field",
                             },
                             {
                                 ownerId: installId,
                                 namespace: this.KEY,
                                 key: "agentes",
-                                value: JSON.stringify(agentes),
+                                value: JSON.stringify(agentes ?? []),
                                 type: "json",
                             },
                         ],
                     },
                 },
             );
+            const r2= await r.json()
+            console.log({r:JSON.stringify(r2?.data)});
+            
             return json({
                 success: true,
                 message: "Configuración guardada con éxito",

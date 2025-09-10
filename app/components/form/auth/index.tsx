@@ -61,7 +61,7 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
                                 validator={validatorData?.user}
                                 onChange={onChangeData("user")}
                             />
-                            <InputPassword
+                            <InputText
                                 name="password"
                                 label="Contraseña"
                                 placeholder="Contraseña"
@@ -102,6 +102,9 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
 
                             {dataError && (
                                 <ErrorComponent error={dataError?.error} />
+                            )}
+                            {data.error && data.error !='-1' && (
+                                <ErrorComponent >{data.error}</ErrorComponent>
                             )}
 
                             <div
