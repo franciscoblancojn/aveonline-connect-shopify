@@ -7,7 +7,6 @@ import {
     InputSelectT,
     InputSwich,
     InputText,
-    Text,
     Title,
 } from "fenextjs";
 import type { useFormAuthProps } from "./hook";

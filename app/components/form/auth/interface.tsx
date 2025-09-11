@@ -6,7 +6,7 @@ export interface IFormAuth {
     currentAgente?: string;
     agentes?: IFormAuthAgentes[];
     error?: string;
-    message?:string
+    message?: string;
 }
 export interface IFormAuthAgentes {
     id: number;

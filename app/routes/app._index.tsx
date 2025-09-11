@@ -38,18 +38,12 @@ export default function Index() {
                     </Link>
                     .
                 </Box>
-                    {settings.message && (
-                        <Alert
-                            message={settings.message}
-                            type="OK"
-                        />
-                    )}
-                    {settings.error && (
-                        <Alert
-                            message={settings.error}
-                            type="ERROR"
-                        />
-                    )}
+                {settings.message && (
+                    <Alert message={settings.message} type="OK" />
+                )}
+                {settings.error && (
+                    <Alert message={settings.error} type="ERROR" />
+                )}
                 <Layout>
                     <Layout.Section>
                         <FormAuth defaultValue={(settings ?? {}) as any} />

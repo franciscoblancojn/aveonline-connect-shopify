@@ -20,12 +20,11 @@ export interface onGetIdAppProps {
 export interface onSaveFieldProps {
     admin: AdminApiContextWithoutRest;
     data: {
-        key: string
-        value: string
-        type: string
-    }[]
+        key: string;
+        value: string;
+        type: string;
+    }[];
 }
-
 
 export interface onSaveDataProps extends ActionFunctionArgs {
     admin: AdminApiContextWithoutRest;
@@ -74,12 +73,12 @@ export class GraphqlAuth {
 
         const installId = data?.currentAppInstallation?.id;
         return installId;
-    }
+    };
 
     onSaveField = async ({ admin, data }: onSaveFieldProps) => {
-        const installId = this.installId ?? await this.onGetIdApp({ admin })
-        this.installId ??= installId
-        const r =  await admin.graphql(
+        const installId = this.installId ?? (await this.onGetIdApp({ admin }));
+        this.installId ??= installId;
+        const r = await admin.graphql(
             `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
                     metafieldsSet(metafields: $metafields) {
                         metafields { id namespace key value }
@@ -88,16 +87,16 @@ export class GraphqlAuth {
                 }`,
             {
                 variables: {
-                    metafields: data.map(e => ({
+                    metafields: data.map((e) => ({
                         ownerId: installId,
                         namespace: this.KEY,
                         ...e,
-                    }))
+                    })),
                 },
             },
         );
         return await r.json();
-    }
+    };
 
     onSaveData = async ({ admin, request, session }: onSaveDataProps) => {
         try {
@@ -139,7 +138,7 @@ export class GraphqlAuth {
                 user: api?.user,
             });
             let agentes: IFormAuth["agentes"] = [];
-            let message = ''
+            let message = "";
             if (api?.user?.token) {
                 const idempresa = api.user.idempresa;
                 const tokenUser = api.user.token;
@@ -163,72 +162,64 @@ export class GraphqlAuth {
                         agentId: parseInt(`${currentAgente}`),
                     });
                     id_font = resultSaveToken?.data?.id;
-                    message = "Configuracion exitosa"
+                    message = "Configuracion exitosa";
                     console.log({ resultSaveToken });
                 }
             }
 
             // 2. Guardar los metafields (usuario y contraseña)
             let _error = "";
-            if(!user && _error == ""){
-                _error = "El usuario es requerido"
+            if (!user && _error == "") {
+                _error = "El usuario es requerido";
             }
-            if(!password && _error == ""){
-                _error = "La contraseña es requerida"
+            if (!password && _error == "") {
+                _error = "La contraseña es requerida";
             }
-            if (api?.user?.status == "error"  && _error == "") {
+            if (api?.user?.status == "error" && _error == "") {
                 _error = api?.user?.message;
             }
-            if(!currentAgente && _error == ""){
-                _error = "La agente es requerido"
+            if (!currentAgente && _error == "") {
+                _error = "La agente es requerido";
             }
             const r = await this.onSaveField({
                 admin,
                 data: [
                     {
-
                         key: "message",
-                        value: `${message == "" ? KEY_EMPTY : (message ??KEY_EMPTY)}`,
+                        value: `${message == "" ? KEY_EMPTY : (message ?? KEY_EMPTY)}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "error",
-                        value: `${_error == "" ? KEY_EMPTY : (_error ??KEY_EMPTY)}`,
+                        value: `${_error == "" ? KEY_EMPTY : (_error ?? KEY_EMPTY)}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "active",
                         value: active ? "true" : "false",
                         type: "boolean",
                     },
                     {
-
                         key: "user",
-                        value: `${user == "" ? KEY_EMPTY : (user ??KEY_EMPTY)}`,
+                        value: `${user == "" ? KEY_EMPTY : (user ?? KEY_EMPTY)}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "password",
-                        value: `${password == "" ? KEY_EMPTY : (password ??KEY_EMPTY)}`,
+                        value: `${password == "" ? KEY_EMPTY : (password ?? KEY_EMPTY)}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "id_font",
                         value: `${id_font ?? KEY_EMPTY}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "currentAgente",
-                        value: `${currentAgente == "" ? KEY_EMPTY : (currentAgente ??KEY_EMPTY)}`,
+                        value: `${currentAgente == "" ? KEY_EMPTY : (currentAgente ?? KEY_EMPTY)}`,
                         type: "single_line_text_field",
                     },
                     {
-
                         key: "agentes",
                         value: JSON.stringify(agentes ?? []),
                         type: "json",
