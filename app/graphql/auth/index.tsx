@@ -7,11 +7,25 @@ import type { Session } from "@shopify/shopify-app-remix/server";
 import { onAddAllWebhooks } from "app/webhook";
 import { parseNumber } from "fenextjs";
 import type { IFormAuth } from "app/components/form/auth/interface";
+import { KEY_EMPTY } from "app/const";
 
 export interface onGetDataProps {
     admin: AdminApiContextWithoutRest;
     settings: Record<string, string>;
 }
+export interface onGetIdAppProps {
+    admin: AdminApiContextWithoutRest;
+}
+
+export interface onSaveFieldProps {
+    admin: AdminApiContextWithoutRest;
+    data: {
+        key: string
+        value: string
+        type: string
+    }[]
+}
+
 
 export interface onSaveDataProps extends ActionFunctionArgs {
     admin: AdminApiContextWithoutRest;
@@ -19,6 +33,7 @@ export interface onSaveDataProps extends ActionFunctionArgs {
 }
 export class GraphqlAuth {
     private KEY = "app_auth";
+    private installId: string | undefined = undefined;
 
     onGetData = async ({ admin, settings = {} }: onGetDataProps) => {
         const respond = await admin.graphql(`
@@ -47,12 +62,49 @@ export class GraphqlAuth {
         return settings;
     };
 
+    onGetIdApp = async ({ admin }: onGetIdAppProps) => {
+        // 1. Obtener el ID de instalación de la app
+        const respond = await admin.graphql(`
+                query {
+                    currentAppInstallation { id }
+                }
+            `);
+        const result = await respond.json();
+        const data = result?.data;
+
+        const installId = data?.currentAppInstallation?.id;
+        return installId;
+    }
+
+    onSaveField = async ({ admin, data }: onSaveFieldProps) => {
+        const installId = this.installId ?? await this.onGetIdApp({ admin })
+        this.installId ??= installId
+        const r =  await admin.graphql(
+            `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
+                    metafieldsSet(metafields: $metafields) {
+                        metafields { id namespace key value }
+                        userErrors { field message }
+                    }
+                }`,
+            {
+                variables: {
+                    metafields: data.map(e => ({
+                        ownerId: installId,
+                        namespace: this.KEY,
+                        ...e,
+                    }))
+                },
+            },
+        );
+        return await r.json();
+    }
+
     onSaveData = async ({ admin, request, session }: onSaveDataProps) => {
         try {
             const form = await request.formData();
             const active = form.get("active");
-            const user = form.get("user");
-            const password = form.get("password");
+            const user = `${form.get("user")}`;
+            const password = `${form.get("password")}`;
             const currentAgente = form.get("currentAgente");
             let id_font: number | string | undefined = `${form.get("id_font")}`;
             if (
@@ -68,12 +120,6 @@ export class GraphqlAuth {
             const token = session.accessToken ?? "";
             const shop = session.shop;
 
-            if (!user) {
-                throw new Error("El usuario es requerido");
-            }
-            if (!password) {
-                throw new Error("La contraseña es requerida");
-            }
             console.log({
                 user,
                 password,
@@ -93,12 +139,13 @@ export class GraphqlAuth {
                 user: api?.user,
             });
             let agentes: IFormAuth["agentes"] = [];
+            let message = ''
             if (api?.user?.token) {
                 const idempresa = api.user.idempresa;
                 const tokenUser = api.user.token;
                 const resultAgentes = await api.agents.get({
                     idempresa,
-                    token:tokenUser,
+                    token: tokenUser,
                 });
                 agentes = resultAgentes?.agentes ?? [];
                 if (currentAgente) {
@@ -116,90 +163,79 @@ export class GraphqlAuth {
                         agentId: parseInt(`${currentAgente}`),
                     });
                     id_font = resultSaveToken?.data?.id;
+                    message = "Configuracion exitosa"
                     console.log({ resultSaveToken });
                 }
             }
-            // 1. Obtener el ID de instalación de la app
-            const respond = await admin.graphql(`
-                query {
-                    currentAppInstallation { id }
-                }
-            `);
-            const result = await respond.json();
-            const data = result?.data;
-
-            const installId = data?.currentAppInstallation?.id;
 
             // 2. Guardar los metafields (usuario y contraseña)
-            let _error = "-1";
-            if (api?.user?.status == "error") {
+            let _error = "";
+            if(!user && _error == ""){
+                _error = "El usuario es requerido"
+            }
+            if(!password && _error == ""){
+                _error = "La contraseña es requerida"
+            }
+            if (api?.user?.status == "error"  && _error == "") {
                 _error = api?.user?.message;
             }
-            const r = await admin.graphql(
-                `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
-                    metafieldsSet(metafields: $metafields) {
-                        metafields { id namespace key value }
-                        userErrors { field message }
-                    }
-                }`,
-                {
-                    variables: {
-                        metafields: [
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "error",
-                                value: _error,
-                                type: "single_line_text_field",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "active",
-                                value: active ? "true" : "false",
-                                type: "boolean",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "user",
-                                value: user,
-                                type: "single_line_text_field",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "password",
-                                value: password,
-                                type: "single_line_text_field",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "id_font",
-                                value: `${id_font ?? "-1"}`,
-                                type: "number_integer",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "currentAgente",
-                                value: `${currentAgente == "" ? "-1" : (currentAgente ?? "-1")}`,
-                                type: "single_line_text_field",
-                            },
-                            {
-                                ownerId: installId,
-                                namespace: this.KEY,
-                                key: "agentes",
-                                value: JSON.stringify(agentes ?? []),
-                                type: "json",
-                            },
-                        ],
+            if(!currentAgente && _error == ""){
+                _error = "La agente es requerido"
+            }
+            const r = await this.onSaveField({
+                admin,
+                data: [
+                    {
+
+                        key: "message",
+                        value: `${message == "" ? KEY_EMPTY : (message ??KEY_EMPTY)}`,
+                        type: "single_line_text_field",
                     },
-                },
-            );
-            const r2 = await r.json();
-            console.log({ r: JSON.stringify(r2?.data) });
+                    {
+
+                        key: "error",
+                        value: `${_error == "" ? KEY_EMPTY : (_error ??KEY_EMPTY)}`,
+                        type: "single_line_text_field",
+                    },
+                    {
+
+                        key: "active",
+                        value: active ? "true" : "false",
+                        type: "boolean",
+                    },
+                    {
+
+                        key: "user",
+                        value: `${user == "" ? KEY_EMPTY : (user ??KEY_EMPTY)}`,
+                        type: "single_line_text_field",
+                    },
+                    {
+
+                        key: "password",
+                        value: `${password == "" ? KEY_EMPTY : (password ??KEY_EMPTY)}`,
+                        type: "single_line_text_field",
+                    },
+                    {
+
+                        key: "id_font",
+                        value: `${id_font ?? KEY_EMPTY}`,
+                        type: "single_line_text_field",
+                    },
+                    {
+
+                        key: "currentAgente",
+                        value: `${currentAgente == "" ? KEY_EMPTY : (currentAgente ??KEY_EMPTY)}`,
+                        type: "single_line_text_field",
+                    },
+                    {
+
+                        key: "agentes",
+                        value: JSON.stringify(agentes ?? []),
+                        type: "json",
+                    },
+                ],
+            });
+            console.log({ r: JSON.stringify(r?.data) });
 
             return json({
                 success: true,
@@ -211,7 +247,6 @@ export class GraphqlAuth {
                 stack: error?.stack,
                 error,
             });
-
             return json(
                 { success: false, message: error?.message },
                 { status: 500 },

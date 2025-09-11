@@ -7,6 +7,7 @@ import {
     InputSelectT,
     InputSwich,
     InputText,
+    Text,
     Title,
 } from "fenextjs";
 import type { useFormAuthProps } from "./hook";
@@ -102,9 +103,6 @@ export const FormAuth = ({ ...props }: FormAuthProps) => {
 
                             {dataError && (
                                 <ErrorComponent error={dataError?.error} />
-                            )}
-                            {data.error && data.error != "-1" && (
-                                <ErrorComponent>{data.error}</ErrorComponent>
                             )}
 
                             <div

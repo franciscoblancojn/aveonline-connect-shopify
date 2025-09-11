@@ -1,6 +1,6 @@
 import { Page, Layout, BlockStack, Link, InlineStack } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { Title, Text, Box } from "fenextjs";
+import { Title, Text, Box, Alert } from "fenextjs";
 import { FormAuth } from "app/components/form/auth";
 import { GraphqlAuth } from "app/graphql/auth";
 import { useLoaderData } from "app/hook/useLoaderData";
@@ -38,6 +38,18 @@ export default function Index() {
                     </Link>
                     .
                 </Box>
+                    {settings.message && (
+                        <Alert
+                            message={settings.message}
+                            type="OK"
+                        />
+                    )}
+                    {settings.error && (
+                        <Alert
+                            message={settings.error}
+                            type="ERROR"
+                        />
+                    )}
                 <Layout>
                     <Layout.Section>
                         <FormAuth defaultValue={(settings ?? {}) as any} />
