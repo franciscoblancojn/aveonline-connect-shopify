@@ -95,10 +95,10 @@ export class GraphqlAuth {
             let agentes: IFormAuth["agentes"] = [];
             if (api?.user?.token) {
                 const idempresa = api.user.idempresa;
-                const token = api.user.token;
+                const tokenUser = api.user.token;
                 const resultAgentes = await api.agents.get({
                     idempresa,
-                    token,
+                    token:tokenUser,
                 });
                 agentes = resultAgentes?.agentes ?? [];
                 if (currentAgente) {
@@ -110,7 +110,7 @@ export class GraphqlAuth {
                     console.log({ resultWebHook });
                     const resultSaveToken = await api.shopify.onSaveToken({
                         idempresa: api.user.idempresa,
-                        token: api.user.token,
+                        token,
                         "x-shopify-shop-domain": shop,
                         modify: id_font,
                         agentId: parseInt(`${currentAgente}`),
