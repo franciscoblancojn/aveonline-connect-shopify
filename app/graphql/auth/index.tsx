@@ -76,8 +76,7 @@ export class GraphqlAuth {
     };
 
     onSaveField = async ({ admin, data }: onSaveFieldProps) => {
-        const installId = this.installId ?? (await this.onGetIdApp({ admin }));
-        this.installId ??= installId;
+        const installId = (await this.onGetIdApp({ admin }));
         const r = await admin.graphql(
             `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
                     metafieldsSet(metafields: $metafields) {
@@ -197,7 +196,7 @@ export class GraphqlAuth {
                     {
                         key: "active",
                         value: active ? "true" : "false",
-                        type: "boolean",
+                        type: "single_line_text_field",
                     },
                     {
                         key: "user",
