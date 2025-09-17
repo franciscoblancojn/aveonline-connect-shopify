@@ -3,7 +3,7 @@
 client_id = "04f9e383c62d9c03fc7db46b48100048"
 name = "aveonline-connect"
 handle = "aveonline-connect"
-application_url = "https://connect-shopify.aveonline.co"
+application_url = "https://connect-crm-s.aveonline.co"
 embedded = true
 
 
@@ -75,7 +75,7 @@ read_legal_policies,write_legal_policies
 """
 
 [auth]
-redirect_urls = ["https://connect-shopify.aveonline.co/auth/callback", "https://connect-shopify.aveonline.co/auth/shopify/callback", "https://connect-shopify.aveonline.co/api/auth/callback"]
+redirect_urls = ["https://connect-crm-s.aveonline.co/auth/callback", "https://connect-crm-s.aveonline.co/auth/shopify/callback", "https://connect-crm-s.aveonline.co/api/auth/callback"]
 
 [pos]
 embedded = false
