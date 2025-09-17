@@ -76,7 +76,7 @@ export class GraphqlAuth {
     };
 
     onSaveField = async ({ admin, data }: onSaveFieldProps) => {
-        const installId = (await this.onGetIdApp({ admin }));
+        const installId = await this.onGetIdApp({ admin });
         const r = await admin.graphql(
             `mutation setAppData($metafields: [MetafieldsSetInput!]!) {
                     metafieldsSet(metafields: $metafields) {
