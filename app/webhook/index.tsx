@@ -11,6 +11,9 @@ export const ListWebhooks = [
     "orders/paid",
     "orders/delete",
     "app/uninstalled",
+    "customers/data_request",
+    "customers/redact",
+    "shop/redact",
 ] as const;
 export type WebhookTopics = (typeof ListWebhooks)[number];
 
